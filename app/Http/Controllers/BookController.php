@@ -7,63 +7,61 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-   public function index()
-   {
-      $books = Book::all();
-      return view('index', compact('books'));
-   }
+    public function index()
+    {
+        $books = Book::all();
+        return view('books.index', ['books' => $books]);
+    }
 
-   public function show($isbn)
-   {
-      $book = Book::where('isbn', $isbn)->first();
-      return view('show', ['book' => $book]);
-   }
+    public function show($id)
+    {
+        $book = Book::find($id);
+        return view('books.show', ['book' => $book]);
+    }
 
-   public function create(Request $request)
-   {
-       $html = $request->input('html');
-       $dom = new \DOMDocument();
-       $dom->loadHTML($html);
-   
-       $titulo = $dom->getElementsByTagName('title')[0]->nodeValue;
-       $descripcion = $dom->getElementsByTagName('p')[0]->nodeValue;
-   
-       $book = new Book();
-       $book->title = $titulo;
-       $book->description = $descripcion;
-       $book->save();
-       return redirect()->route('welcome');
-   }
+    public function create()
+    {
+        return view('books.create');
+    }
 
-   public function store(Request $request)
-   {
-      $book = new Book;
-      $book->title = $request->title;
-      $book->author = $request->author;
+    public function store(Request $request)
+    {
+        $book = new Book;
+        $book->isbn = $request->input('isbn');
+        $book->title = $request->input('title');
+        $book->author = $request->input('author');
+        $book->published_date = $request->input('published_date');
+        $book->description = $request->input('description');
+        $book->price = $request->input('price');
+        $book->save();
 
-      $book->save();
+        return redirect('/books');
+    }
 
-      return redirect()->route('index');
-   }
+    public function edit($id)
+    {
+        $book = Book::find($id);
+        return view('books.edit', ['book' => $book]);
+    }
 
-   public function edit(Book $book)
-   {
-      return view('edit', compact('book'));
-   }
+    public function update(Request $request, $id)
+    {
+        $book = Book::find($id);
+        $book->title = $request->input('title');
+        $book->author = $request->input('author');
+        $book->price = $request->input('price');
+        $book->description = $request->input('description');
+        $book->published_date = $request->input('published_date');
+        $book->save();
+        return redirect('/books')->with('success', 'Libro actualizado correctamente');
+    }
 
-   public function update(Request $request, Book $book)
-   {
-      $book->title = $request->title;
-      $book->author = $request->author;
-      $book->save();
 
-      return redirect()->route('show', $book);
-   }
+    public function destroy($id)
+{
+    $book = Book::findOrFail($id);
+    $book->delete();
+    return view('books.index');
+}
 
-   public function destroy(Book $book)
-   {
-      $book->delete();
-
-      return redirect()->route('index');
-   }
 }

@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('book_category', function (Blueprint $table) {
-            $table->id()->autoIncrement();
-            $table->foreignId('id_category')->references('id')->on('categories');
-            $table->foreignId('id_book')->references('id')->on('books');
+            $table->foreignId('book_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->timestamps();
+            $table->primary(['book_id', 'category_id']);
         });
     }
 

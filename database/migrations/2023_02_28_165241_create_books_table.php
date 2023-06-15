@@ -12,17 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('books', function (Blueprint $table) {
-            $table->id()->autoIncrement();
+            $table->id();
             $table->string('isbn')->unique();
             $table->string('title');
             $table->string('author');
             $table->date('published_date');
-            $table->string('description');
-            $table->float('price');
-            $table->dateTime('created_at_book');
-            $table->dateTime('updated_at_book');
+            $table->text('description');
+            $table->decimal('price', 10, 2);
             $table->timestamps();
-
         });
     }
 
